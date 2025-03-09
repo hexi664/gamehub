@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -597,7 +597,7 @@
                     <div class="game-info">
                         <h3 class="game-title">Snake</h3>
                         <p class="game-description">The classic Snake game. Control the snake with arrow keys, eat food to increase your length and score.</p>
-                        <a href="#" class="play-button" onclick="openGameModal('Snake', 'Use arrow keys to control the snake. Eat food to increase your length and score.', 'games/snakes/index.html')">Play Now</a>
+                        <a href="#" class="play-button" onclick="openGameModal('Snake', 'Use arrow keys to control the snake. Eat food to increase your length and score.', './games/snakes/index.html')">Play Now</a>
                     </div>
                 </div>
                 
@@ -607,7 +607,7 @@
                     <div class="game-info">
                         <h3 class="game-title">飞机大战</h3>
                         <p class="game-description">经典的射击游戏。控制飞机躲避敌人，收集道具，尽可能获得高分！</p>
-                        <a href="#" class="play-button" onclick="openGameModal('飞机大战', '使用左右方向键移动飞机，空格键发射子弹。收集黄色道具提高射速，绿色道具恢复生命值。', 'games/plane-battle/index.html')">Play Now</a>
+                        <a href="#" class="play-button" onclick="openGameModal('飞机大战', '使用左右方向键移动飞机，空格键发射子弹。收集黄色道具提高射速，绿色道具恢复生命值。', './games/plane-battle/index.html')">Play Now</a>
                     </div>
                 </div>
                 
@@ -657,7 +657,7 @@
                     <div class="game-info">
                         <h3 class="game-title">甄开心小镇疑云</h3>
                         <p class="game-description">3D全景侦探小游戏。在甄开心小镇寻找线索，帮助甄不戳找回失窃的宝石。</p>
-                        <a href="#" class="play-button" onclick="openGameModal('甄开心小镇疑云', '左右滑动屏幕探索3D全景场景，点击交互点寻找线索，找出嫌疑人真正躲藏的位置。', 'game-monster/index.html')">Play Now</a>
+                        <a href="#" class="play-button" onclick="openGameModal('甄开心小镇疑云', '左右滑动屏幕探索3D全景场景，点击交互点寻找线索，找出嫌疑人真正躲藏的位置。', './game-monster/index.html')">Play Now</a>
                     </div>
                 </div>
                 
@@ -763,10 +763,10 @@
     <script>
         // Helper function: Handle GameDistribution game URL
         function getGameDistributionUrl(gameId, gameName) {
-            // Get current website domain
+            // Get current website domain - 使用动态获取域名
             var domain = window.location.hostname;
             // If in local development environment, use a fixed domain
-            if (domain === 'localhost' || domain === '127.0.0.1') {
+            if (domain === 'localhost' || domain === '127.0.0.1' || domain === '') {
                 domain = 'yourgamesite.com'; // Replace with your actual domain
             }
             
@@ -790,7 +790,7 @@
             return window.innerWidth > window.innerHeight;
         }
         
-        // Open game modal
+        // Open game modal - 修改以处理跨域问题
         function openGameModal(title, description, gameUrl) {
             document.getElementById('gameModalTitle').textContent = title;
             document.getElementById('gameModalDescription').textContent = description;
@@ -799,14 +799,21 @@
             var gameLoading = document.getElementById('gameLoading');
             gameLoading.style.display = 'flex';
             
-            // Set iframe src attribute directly
+            // 添加安全属性到iframe
             var gameIframe = document.getElementById('gameIframe');
             gameIframe.src = gameUrl;
             gameIframe.title = title;
+            gameIframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+            gameIframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms');
             
             // 监听iframe加载完成事件
             gameIframe.onload = function() {
                 gameLoading.style.display = 'none';
+            };
+            
+            // 处理加载错误
+            gameIframe.onerror = function() {
+                gameLoading.innerHTML = '<p>加载失败，请刷新页面重试</p>';
             };
             
             // Show modal with animation
